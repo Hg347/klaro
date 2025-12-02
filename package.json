@@ -1,9 +1,7 @@
 {
   "author": "KIProtect GmbH",
   "browserslist": [
-    "> 0.25%",
-    "IE 11",
-    "IE 9"
+    "defaults"
   ],
   "bugs": {
     "url": "https://github.com/KIProtect/klaro/issues"
@@ -82,5 +80,5 @@
     "make-dev": "cross-env APP_ENV=dev webpack serve --mode development --config webpack.config.js",
     "make-watch": "cross-env APP_ENV=dev webpack --mode development --watch --config webpack.config.js"
   },
-  "version": "0.7.22"
+  "version": "0.7.23+finanz54.club"
 }

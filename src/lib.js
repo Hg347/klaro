@@ -322,7 +322,7 @@ export function show(config, modal, api){
 const managers = {}
 
 export function resetManagers(){
-    for(const key in Object.keys(managers))
+    for(const key of Object.keys(managers))
         delete managers[key]
 }
 
