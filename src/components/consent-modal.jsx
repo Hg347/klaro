@@ -118,10 +118,10 @@ export default class ConsentModal extends React.Component {
             );
 
         const innerModal = (
-            <div className="cm-modal cm-klaro">
+            <div className="cm-modal cm-klaro" role="dialog" aria-modal="true" aria-labelledby="id-cm-title">
                 <div className="cm-header">
                     {closeLink}
-                    <h1 className="title">
+                    <h1 className="title" id="id-cm-title">
                         <Text
                             config={config}
                             text={t(['consentModal', 'title'])}
