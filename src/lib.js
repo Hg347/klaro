@@ -110,6 +110,14 @@ export function render(config, opts){
 
 export function renderContextualConsentNotices(manager, tt, lang, config, opts){
     const notices = []
+    const normalizeCssSize = (value) => {
+        if (value === null || value === undefined)
+            return ''
+        const trimmedValue = `${value}`.trim()
+        if (!trimmedValue)
+            return ''
+        return /^\d+$/.test(trimmedValue) ? `${trimmedValue}px` : trimmedValue
+    }
     for(const service of config.services){
         const consent = manager.getConsent(service.name) && (manager.confirmed || service.optOut)
         const elements = document.querySelectorAll("[data-name='"+service.name+"']")
@@ -126,8 +134,12 @@ export function renderContextualConsentNotices(manager, tt, lang, config, opts){
                 }
                 if (placeholderElement === null){
                     placeholderElement = document.createElement("DIV")
-                    placeholderElement.style.maxWidth = element.width+"px"
-                    placeholderElement.style.height = element.height+"px"
+                    const placeholderWidth = normalizeCssSize(element.getAttribute('width') || element.style.width)
+                    const placeholderHeight = normalizeCssSize(element.getAttribute('height') || element.style.height)
+                    if (placeholderWidth)
+                        placeholderElement.style.maxWidth = placeholderWidth
+                    if (placeholderHeight)
+                        placeholderElement.style.height = placeholderHeight
                     applyDataset({type: 'placeholder', name: service.name}, placeholderElement)
                     // if consent is already given, we still insert an invisble placeholder that
                     // might be revealed later if the user changes the consent decision
