@@ -14,8 +14,8 @@ export default class ConsentNotice extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.config.autoFocus && this.noticeRef) {
-            this.noticeRef.focus()
+        if (this.props.config.autoFocus && this.props.show) {
+            this.focusNotice();
         }
     }
 
@@ -23,9 +23,23 @@ export default class ConsentNotice extends React.Component {
         if (prevProps.modal !== this.props.modal)
             this.setState({ modal: this.props.modal });
 
-        if (this.noticeRef) {
-            this.noticeRef.focus();
+        const becameVisible = !prevProps.show && this.props.show;
+        if (this.props.config.autoFocus && becameVisible) {
+            this.focusNotice();
         }
+    }
+
+    focusNotice() {
+        if (!this.noticeRef) return;
+
+        if (typeof window !== 'undefined' && window.requestAnimationFrame) {
+            window.requestAnimationFrame(() => {
+                if (this.noticeRef) this.noticeRef.focus();
+            });
+            return;
+        }
+
+        this.noticeRef.focus();
     }
 
     executeButtonClicked = (setChangedAll, changedAllValue, eventType) => {
@@ -121,9 +135,7 @@ export default class ConsentNotice extends React.Component {
             else this.setState({ modal: false });
 
             setTimeout(() => {
-                if (this.noticeRef) {
-                    this.noticeRef.focus();
-                }
+                this.focusNotice();
             }, 1);
         };
 
@@ -232,7 +244,6 @@ export default class ConsentNotice extends React.Component {
                 aria-label={!(t(['!', 'consentNotice', 'title']) && config.showNoticeTitle) ? t(['consentNotice', 'title']) || t(['consentModal', 'title']) : undefined}
                 id="klaro-cookie-notice"
                 tabIndex="0"
-                autofocus={config.autoFocus}
                 ref={(div) => {
                     this.noticeRef = div;
                 }}
