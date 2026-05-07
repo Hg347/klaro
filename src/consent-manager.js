@@ -270,6 +270,10 @@ export default class ConsentManager {
                     console.debug(`Skipping ${element.tagName} for service ${service.name}, as it already has the correct type...`)
                     continue
                 }
+                // If the iframe is already blocked, avoid recreating DOM nodes.
+                if (!consent && element.src === '' && element.style.display === 'none'){
+                    continue
+                }
                 // we create a new script instead of updating the node in
                 // place, as the script won't start correctly otherwise
                 const newElement = document.createElement(element.tagName)
@@ -308,6 +312,10 @@ export default class ConsentManager {
                 if (consent && element.type === (type || "") && element.src === src){
                     // eslint-disable-next-line no-console
                     console.debug(`Skipping ${element.tagName} for service ${service.name}, as it already has the correct type or src...`)
+                    continue
+                }
+                // If the element is already blocked, avoid recreating DOM nodes.
+                if (!consent && element.type === 'text/plain'){
                     continue
                 }
                 // we create a new script instead of updating the node in
