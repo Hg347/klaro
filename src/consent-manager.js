@@ -141,6 +141,50 @@ export default class ConsentManager {
 
     saveAndApplyConsents(eventType){
         this.saveConsents(eventType)
+
+        const apply = () => {
+            this.applyConsents()
+        }
+
+        // Accept/save can trigger several DOM/script activations. Run this after
+        // the click task so scrolling stays responsive.
+        if ((eventType === 'accept' || eventType === 'save') && typeof window !== 'undefined'){
+            let lastScrollTs = Date.now()
+            const startedAt = Date.now()
+            const quietWindowMs = 1200
+            const maxWaitMs = 8000
+
+            const onScroll = () => {
+                lastScrollTs = Date.now()
+            }
+
+            const cleanup = () => {
+                window.removeEventListener('scroll', onScroll)
+            }
+
+            const maybeApply = () => {
+                const now = Date.now()
+                const quietFor = now - lastScrollTs
+                const waitedFor = now - startedAt
+
+                if (quietFor >= quietWindowMs || waitedFor >= maxWaitMs){
+                    cleanup()
+                    apply()
+                    return
+                }
+
+                window.setTimeout(maybeApply, 250)
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true })
+            if ('requestIdleCallback' in window){
+                window.requestIdleCallback(maybeApply)
+            } else {
+                window.setTimeout(maybeApply, 250)
+            }
+            return
+        }
+
         this.applyConsents()
     }
 
